@@ -16,9 +16,23 @@
     <img src="./mario.gif" class="mario">
     <img src="./pipe.png" class="pipe">
     <img src="./clouds.png" class="clouds">
+    <!-- <img src="./estrela.gif" class="estrela"> -->
 
+    <audio id="musica-fundo" loop>
+        <source src="./musica-fundo.mp3" type="audio/mpeg">
+        <source src="./musica-fundo.mp3" type="audio/ogg">
+        Seu navegador não suporta a reprodução de áudio.
+      </audio>
+      
+      <audio id="musica-game-over">
+        <source src="./musica-game-over.mp3" type="audio/mpeg">
+        <source src="./musica-game-over.mp3" type="audio/ogg">
+        Seu navegador não suporta a reprodução de áudio.
+      </audio>
+      
+      
     <div class="game-container">  <div class="score-container">
-        Pontuação: <span class="score">0</span>
+        : <span class="score">0</span>
     </div>
     <div class="game-area">
       </div>
@@ -28,6 +42,10 @@
         <p>Pontuação: <span id="finalScore">0</span></p>
         <button onclick="restartGame()">Reiniciar</button>
     </div>
+
+    <div class="score-container">
+        <!-- Pontuação: <span class="score">0</span> -->
+        <img src="./estrela.gif" class="estrela"> </div>
 
 </div>
 
