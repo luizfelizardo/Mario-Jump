@@ -4,27 +4,54 @@ const clouds = document.querySelectorAll('.cloud');
 const scoreDisplay = document.querySelector('.score');
 const musicaFundo = document.getElementById('musica-fundo');
 const musicaGameOver = document.getElementById('musica-game-over');
+let somPulo = document.getElementById('som-pulo'); // Mantém a referência inicial
+
 musicaFundo.play();
 let score = 0;
 let gameOver = false;
-
-
-
-// Adapta as dimensões do jogo para diferentes proporções de tela
-const gameContainer = document.querySelector('.game-container'); // Certifique-se de ter um elemento com essa classe no seu HTML
+let playerName = prompt("Digite seu nome:") || "Jogador";
+const gameContainer = document.querySelector('.game-container');
 gameContainer.style.width = '800px';
 gameContainer.style.height = '600px';
-gameContainer.style.position = 'relative'; // Importante para posicionar os elementos do jogo corretamente
+gameContainer.style.position = 'relative';
 
+// Função para ajustar e tocar o som do pulo
+function playJumpSound() {
+    if (!somPulo) {
+        somPulo = new Audio('./mario-jump.mp3'); // Cria um novo elemento se não existir
+        somPulo.id = 'som-pulo';
+        somPulo.volume = 0.3; // Define o volume
+        somPulo.addEventListener('loadeddata', () => {
+            console.log('Som de pulo carregado.');
+        });
+        somPulo.addEventListener('error', (error) => {
+            console.error('Erro ao carregar som de pulo:', error);
+        });
+    }
+
+    if (somPulo.readyState >= 4) { // Verifica se o áudio está pronto
+        somPulo.currentTime = 0;
+        somPulo.play();
+    } else {
+        console.log('Som de pulo não está pronto.');
+    }
+}
 
 const jump = () => {
     if (!gameOver) {
         mario.classList.add('jump');
-
+        playJumpSound(); // Usa a função para tocar o som
         setTimeout(() => {
             mario.classList.remove('jump');
         }, 500);
     }
+}
+
+let marioAnimationId;
+let pipeSpeed = 1.8; // Velocidade inicial do cano (1.5 segundos)
+
+function updatePipeAnimation() {
+    pipe.style.animation = `pipe-animation ${pipeSpeed}s infinite linear`;
 }
 
 const loop = setInterval(() => {
@@ -36,23 +63,43 @@ const loop = setInterval(() => {
         scoreDisplay.textContent = score;
     }
 
+    // Verifica a pontuação e atualiza a velocidade do cano
+    if (score >= 100 && pipeSpeed > 1) {
+        pipeSpeed = 1.5;
+        updatePipeAnimation();
+        document.getElementById('levelDisplay').textContent = "Nível 2";
+       
+    }
+    if (score >= 200 && pipeSpeed > 1) {
+        pipeSpeed = 1.2;
+        updatePipeAnimation();
+        document.getElementById('levelDisplay').textContent = "Nível 3";
+    }
+
+    if (score >= 300 && pipeSpeed > 1) {
+        pipeSpeed = 1.0;
+        updatePipeAnimation();
+        document.getElementById('levelDisplay').textContent = "Nível 4";
+    }
+
+    if (score >= 400 && pipeSpeed > 1) {
+        pipeSpeed = 0.8;
+        updatePipeAnimation();
+        document.getElementById('levelDisplay').textContent = "Nível 5";
+    
+
+    if (score >= 500 && pipeSpeed > 1) {
+            pipeSpeed = 0.4;
+            updatePipeAnimation();
+            document.getElementById('levelDisplay').textContent = "Nível 6";
+        }
+
+    }
+
     if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 80) {
         gameOver = true;
-        
-        musicaFundo.pause(); // Pause a música de fundo
-        
-        musicaGameOver.addEventListener('loadeddata', () => { // Ou 'canplaythrough'
-            musicaGameOver.play();
-        }, { once: true }); // Ouve o evento apenas uma vez
+        musicaFundo.pause();
 
-        // Se o evento 'loadeddata' não for acionado rapidamente (problema de carregamento),
-        // você pode adicionar um fallback com setTimeout (menos confiável):
-        setTimeout(() => {
-            if (musicaGameOver.paused) { // Verifica se ainda está pausado (não tocou)
-                musicaGameOver.play();
-            }
-        }, 500); // Tenta tocar após 1 segundo (ajuste este tempo se necessário)
-       
         pipe.style.animation = 'none';
         pipe.style.left = `${pipePosition}px`;
 
@@ -69,23 +116,60 @@ const loop = setInterval(() => {
 
         clouds.forEach(cloud => {
             cloud.style.animation = 'none';
-            const cloudPosition = cloud.offsetLeft;
-            cloud.style.left = `${cloudPosition}px`;
+            cloud.style.left = `${cloud.offsetLeft}px`;
         });
 
         document.getElementById("finalScore").textContent = score;
         document.getElementById("gameOverModal").style.display = "block";
+
+        updateRanking(score);
+        displayRanking();
     }
 }, 10);
-
-
 
 document.addEventListener('keydown', jump);
 document.addEventListener('touchstart', jump);
 
 function restartGame() {
     location.reload();
-    musicaFundo.pause(); // Pause a música
-    musicaFundo.currentTime = 0; // Reinicie a posição da música para o início
-    musicaFundo.play(); // Toque a música novamente
+    musicaFundo.pause();
+    musicaFundo.currentTime = 0;
+    musicaFundo.play();
 }
+
+function closeModal() {
+    document.getElementById("gameOverModal").style.display = "none";
+}
+
+const highScoresKey = 'highScores';
+let highScores = JSON.parse(localStorage.getItem(highScoresKey)) || [];
+
+function updateRanking(score) {
+    const newScore = { name: playerName, score: score };
+    highScores.push(newScore);
+    highScores.sort((a, b) => b.score - a.score);
+    highScores = highScores.slice(0, 10);
+    musicaGameOver.play();
+    localStorage.setItem(highScoresKey, JSON.stringify(highScores));
+}
+
+function displayRanking() {
+    const rankingList = document.getElementById('rankingList');
+    rankingList.innerHTML = '';
+    highScores.forEach((score, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `${index + 1}. ${score.name}: ${score.score}`;
+        rankingList.appendChild(listItem);
+    });
+}
+
+function resetRanking() {
+    highScores = [];
+    localStorage.removeItem(highScoresKey);
+    displayRanking();
+}
+
+const resetRankingButton = document.getElementById('resetRankingButton');
+resetRankingButton.addEventListener('click', resetRanking);
+
+displayRanking();
