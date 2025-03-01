@@ -1,134 +1,136 @@
 const mario = document.querySelector('.mario');
 const pipe = document.querySelector('.pipe');
-const clouds = document.querySelectorAll('.cloud');
+const clouds = document.querySelector('.clouds');
 const scoreDisplay = document.querySelector('.score');
 const musicaFundo = document.getElementById('musica-fundo');
 const musicaGameOver = document.getElementById('musica-game-over');
-let somPulo = document.getElementById('som-pulo'); // Mantém a referência inicial
 
 musicaFundo.play();
 let score = 0;
 let gameOver = false;
-let playerName = prompt("Digite seu nome:") || "Jogador";
+let playerName = "Jogador"; // Valor padrão
+
 const gameContainer = document.querySelector('.game-container');
-gameContainer.style.width = '800px';
-gameContainer.style.height = '600px';
-gameContainer.style.position = 'relative';
 
-// Função para ajustar e tocar o som do pulo
-function playJumpSound() {
-    if (!somPulo) {
-        somPulo = new Audio('./mario-jump.mp3'); // Cria um novo elemento se não existir
-        somPulo.id = 'som-pulo';
-        somPulo.volume = 0.3; // Define o volume
-        somPulo.addEventListener('loadeddata', () => {
-            console.log('Som de pulo carregado.');
-        });
-        somPulo.addEventListener('error', (error) => {
-            console.error('Erro ao carregar som de pulo:', error);
-        });
-    }
+// Modal para coletar o nome do jogador
+const nomeJogadorModal = document.getElementById('nomeJogadorModal');
+const nomeJogadorInput = document.getElementById('nomeJogadorInput');
+const nomeJogadorButton = document.getElementById('nomeJogadorButton');
 
-    if (somPulo.readyState >= 4) { // Verifica se o áudio está pronto
-        somPulo.currentTime = 0;
-        somPulo.play();
-    } else {
-        console.log('Som de pulo não está pronto.');
-    }
+function exibirNomeJogadorModal() {
+    nomeJogadorModal.style.display = "block";
 }
 
-const jump = () => {
-    if (!gameOver) {
-        mario.classList.add('jump');
-        playJumpSound(); // Usa a função para tocar o som
-        setTimeout(() => {
-            mario.classList.remove('jump');
-        }, 500);
-    }
+function coletarNomeJogador() {
+    playerName = nomeJogadorInput.value || "Jogador";
+    nomeJogadorModal.style.display = "none";
+    iniciarJogo();
 }
 
-let marioAnimationId;
-let pipeSpeed = 1.8; // Velocidade inicial do cano (1.5 segundos)
+nomeJogadorButton.addEventListener('click', coletarNomeJogador);
 
-function updatePipeAnimation() {
-    pipe.style.animation = `pipe-animation ${pipeSpeed}s infinite linear`;
-}
-
-const loop = setInterval(() => {
-    const pipePosition = pipe.offsetLeft;
-    const marioPosition = +window.getComputedStyle(mario).bottom.replace('px', '');
-
-    if (pipePosition < 0 && marioPosition >= 0 && !gameOver) {
-        score++;
-        scoreDisplay.textContent = score;
+function iniciarJogo() {
+    const jump = () => {
+        if (!gameOver) {
+            mario.classList.add('jump');
+            setTimeout(() => {
+                mario.classList.remove('jump');
+            }, 500);
+        }
     }
 
-    // Verifica a pontuação e atualiza a velocidade do cano
-    if (score >= 100 && pipeSpeed > 1) {
-        pipeSpeed = 1.5;
-        updatePipeAnimation();
-        document.getElementById('levelDisplay').textContent = "Nível 2";
-       
-    }
-    if (score >= 200 && pipeSpeed > 1) {
-        pipeSpeed = 1.2;
-        updatePipeAnimation();
-        document.getElementById('levelDisplay').textContent = "Nível 3";
+    let marioAnimationId;
+    let pipeSpeed = 1.8;
+    let currentLevel = 1;
+
+    function updatePipeAnimation() {
+        pipe.style.animation = `pipe-animation ${pipeSpeed}s infinite linear`;
     }
 
-    if (score >= 300 && pipeSpeed > 1) {
-        pipeSpeed = 1.0;
+    setTimeout(() => {
         updatePipeAnimation();
-        document.getElementById('levelDisplay').textContent = "Nível 4";
-    }
+    }, 2000);
 
-    if (score >= 400 && pipeSpeed > 1) {
-        pipeSpeed = 0.8;
-        updatePipeAnimation();
-        document.getElementById('levelDisplay').textContent = "Nível 5";
-    
+    const loop = setInterval(() => {
+        const pipePosition = pipe.offsetLeft;
+        const marioPosition = +window.getComputedStyle(mario).bottom.replace('px', '');
 
-    if (score >= 500 && pipeSpeed > 1) {
+        if (pipePosition < 0 && marioPosition >= 0 && !gameOver) {
+            score++;
+            scoreDisplay.textContent = score;
+        }
+
+        if (score >= 100 && pipeSpeed > 1.5 && currentLevel < 2) {
+            pipeSpeed = 1.5;
+            updatePipeAnimation();
+            currentLevel = 2;
+            document.getElementById('levelDisplay').textContent = "Nível 2";
+        }
+        if (score >= 200 && pipeSpeed > 1.2 && currentLevel < 3) {
+            pipeSpeed = 1.2;
+            updatePipeAnimation();
+            currentLevel = 3;
+            document.getElementById('levelDisplay').textContent = "Nível 3";
+        }
+
+        if (score >= 300 && pipeSpeed > 1.0 && currentLevel < 4) {
+            pipeSpeed = 1.0;
+            updatePipeAnimation();
+            currentLevel = 4;
+            document.getElementById('levelDisplay').textContent = "Nível 4";
+        }
+
+        if (score >= 400 && pipeSpeed > 0.8 && currentLevel < 5) {
+            pipeSpeed = 0.8;
+            updatePipeAnimation();
+            currentLevel = 5;
+            document.getElementById('levelDisplay').textContent = "Nível 5";
+        }
+
+        if (score >= 500 && pipeSpeed > 0.4 && currentLevel < 6) {
             pipeSpeed = 0.4;
             updatePipeAnimation();
+            currentLevel = 6;
             document.getElementById('levelDisplay').textContent = "Nível 6";
         }
 
-    }
+        // Condição de colisão ajustada (ajuste os valores conforme necessário)
+        if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 100 && !gameOver) { 
+            gameOver = true;
+            musicaFundo.pause();
 
-    if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 80) {
-        gameOver = true;
-        musicaFundo.pause();
+            // Para as animações
+            pipe.style.animation = 'none';
+            mario.style.animation = 'none';
+            clouds.style.animation = 'none';
 
-        pipe.style.animation = 'none';
-        pipe.style.left = `${pipePosition}px`;
+            // Define as posições finais
+            pipe.style.left = `${pipePosition}px`;
+            mario.style.bottom = `${marioPosition}px`;
+            clouds.style.left = `${clouds.offsetLeft}px`;
 
-        mario.style.animation = 'none';
-        mario.style.bottom = `${marioPosition}px`;
+            // Altera a imagem do Mario
+            mario.src = './game-over.png';
+            mario.style.width = '75px';
+            mario.style.marginLeft = '50px';
 
-        mario.src = './game-over.png';
-        mario.style.width = '75px';
-        mario.style.marginLeft = '50px';
+            // Limpa o intervalo e remove os ouvintes de eventos
+            clearInterval(loop);
+            document.removeEventListener('keydown', jump);
+            document.removeEventListener('touchstart', jump);
 
-        clearInterval(loop);
-        document.removeEventListener('keydown', jump);
-        document.removeEventListener('touchstart', jump);
+            // Exibe o modal de Game Over
+            document.getElementById("finalScore").textContent = score;
+            document.getElementById("gameOverModal").style.display = "block";
 
-        clouds.forEach(cloud => {
-            cloud.style.animation = 'none';
-            cloud.style.left = `${cloud.offsetLeft}px`;
-        });
+            updateRanking(score);
+            displayRanking();
+        }
+    }, 10);
 
-        document.getElementById("finalScore").textContent = score;
-        document.getElementById("gameOverModal").style.display = "block";
-
-        updateRanking(score);
-        displayRanking();
-    }
-}, 10);
-
-document.addEventListener('keydown', jump);
-document.addEventListener('touchstart', jump);
+    document.addEventListener('keydown', jump);
+    document.addEventListener('touchstart', jump);
+}
 
 function restartGame() {
     location.reload();
@@ -173,3 +175,6 @@ const resetRankingButton = document.getElementById('resetRankingButton');
 resetRankingButton.addEventListener('click', resetRanking);
 
 displayRanking();
+
+// Exibe o modal para coletar o nome do jogador no início
+exibirNomeJogadorModal();

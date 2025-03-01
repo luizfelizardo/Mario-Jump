@@ -19,6 +19,8 @@
 .game-container {
     width: 100%;
     height: 60vh;
+    /* transform: translateZ(0);
+    backface-visibility: hidden; */
    
 }
 
@@ -182,4 +184,73 @@ button {
 
 #rankingList li {
     margin-bottom: 5px;
+}
+
+.tela-abertura {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #87CEEB; /* Azul claro, similar ao céu do Mario */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Garante que a tela de abertura fique na frente */
+}
+
+.tela-abertura h1 {
+    font-size: 3em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.tela-abertura button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background-color: #FF4500; /* Laranja, similar ao chapéu do Mario */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.tela-abertura button:hover {
+    background-color: #E23A00;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: center;
+}
+
+#nomeJogadorInput {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+#nomeJogadorButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
