@@ -1,0 +1,256 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.game-board {
+    width: 100%;
+    height: 100vh;
+    border: 2px solid rgb(32, 31, 31);
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 15px solid rgb(35, 160, 35);
+    background: linear-gradient(#87CEEB, #E0F6FF);
+    
+}
+
+.game-container {
+    width: 100%;
+    height: 60vh;
+    /* transform: translateZ(0);
+    backface-visibility: hidden; */
+   
+}
+
+#levelDisplay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 38px; /* Aumenta um pouco o tamanho da fonte */
+    color: #fff;
+    background-color: #3498db; /* Azul vibrante */
+    padding: 10px 20px; /* Aumenta o padding */
+    border-radius: 10px; /* Arredonda mais os cantos */
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4); /* Sombra mais forte */
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Fonte arredondada */
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.973); /* Sombra no texto */
+    border: 2px solid #2980b9; /* Contorno */
+    background-image: linear-gradient(to bottom right, rgba(255, 255, 255, 0.2), transparent); /* Iluminação sutil */
+    transition: transform 0.3s ease; /* Transição suave */
+}
+
+#levelDisplay:hover{
+    transform: scale(1.05);
+}
+
+.mario {
+    width: 150px;
+    position: absolute;
+    bottom: 0;
+}
+
+.jump {
+    animation: jump 500ms ease-out;
+}
+
+.clouds {
+    position: absolute;
+    width: 300px;
+    animation: clouds-animation 15s infinite linear;
+}
+
+.score-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 30px;
+    color: #33322c;
+}
+
+.estrela {
+    width: 30px;
+    height: 30px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #33322c;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.pipe {
+    position: absolute;
+    bottom: 0;
+    width: 80px;
+    animation: pipe-animation 1.8s infinite linear;
+    right: 0;
+}
+
+@keyframes pipe-animation {
+    from {
+        right: 0;
+    }
+    to {
+        right: 100%;
+    }
+}
+
+@keyframes jump {
+    0% {
+        bottom: 0;
+    }
+    40% {
+        bottom: 180px;
+    }
+    50% {
+        bottom: 180px;
+    }
+    60% {
+        bottom: 180px;
+    }
+    100% {
+        bottom: 0;
+    }
+}
+
+@keyframes clouds-animation {
+    from {
+        right: -300px;
+    }
+    to {
+        right: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-container {
+        width: 70%;
+        height: 60vh;
+    }
+    mario {
+        width: 30%;
+    }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 2px solid black;
+    width: 40%;
+    text-align: center;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#rankingList {
+    list-style-type: none;
+    padding: 0;
+}
+
+#rankingList li {
+    margin-bottom: 5px;
+}
+
+.tela-abertura {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #87CEEB; /* Azul claro, similar ao céu do Mario */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Garante que a tela de abertura fique na frente */
+}
+
+.tela-abertura h1 {
+    font-size: 3em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.tela-abertura button {
+    padding: 15px 30px;
+    font-size: 1.2em;
+    background-color: #FF4500; /* Laranja, similar ao chapéu do Mario */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.tela-abertura button:hover {
+    background-color: #E23A00;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    text-align: center;
+}
+
+#nomeJogadorInput {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+#nomeJogadorButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
